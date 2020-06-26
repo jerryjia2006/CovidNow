@@ -2,16 +2,25 @@
 <html>
 	<head>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
 		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
     	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    	<script src="06-15-2020.js"></script>
+
+    	<script src="06-25-2020.js"></script>
+
     	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
 		  integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
 		  crossorigin=""/>
+
 		<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
 		  integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
 		  crossorigin=""></script>
 
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js" integrity="sha256-nZaxPHA2uAaquixjSDX19TmIlbRNCOrf5HO1oHl5p70=" crossorigin="anonymous"></script>
+        
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.css" integrity="sha256-IvM9nJf/b5l2RoebiFno92E5ONttVyaEEsdemDC6iQA=" crossorigin="anonymous" />
+        
 		<title>CovidNow</title>
 
 		<style type="text/css">
@@ -52,46 +61,14 @@
 	<div class="row">
 
       <div class="col s12 m3 l3">
-              <ul class="collection">
-                <li class="collection-item avatar">
-                  <img src="pikachu.jpg" alt="" class="circle">
-                  <span class="title">Pikachu</span>
-                  <p>Undisputed favourite pokemon <br>
-                     Even grandma knows this one
-                  </p>
-                  <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
-                </li>
-                <li class="collection-item avatar">
-                  <i class="material-icons circle">folder</i>
-                  <span class="title">Title</span>
-                  <p>First Line <br>
-                     Second Line
-                  </p>
-                  <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
-                </li>
-                <li class="collection-item avatar">
-                  <i class="material-icons circle green">insert_chart</i>
-                  <span class="title">Title</span>
-                  <p>First Line <br>
-                     Second Line
-                  </p>
-                  <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
-                </li>
-                <li class="collection-item avatar">
-                  <i class="material-icons circle red">play_arrow</i>
-                  <span class="title">Title</span>
-                  <p>First Line <br>
-                     Second Line
-                  </p>
-                  <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
-                </li>
-              </ul>
-          </div>
+               
+               <canvas id="chartjs-2" style="width: 350px; height: 497px;"></canvas>
+      </div>
             
             
-          <div class="col s12 m6 l6 orange" style="padding: 20px;"><div id="map" style="height:456px;"></div></div>
+          <div class="col s12 m6 l6 orange" style="padding: 20px;"><div id="map" style="height:497px;"></div></div>
             
-          <div class="col s12 m3 l3" id="mylist" style="background-color: #0066cc">Top 5 confirmed</div>
+          <div class="col s12 m3 l3" id="mylist" style="background-color: #0066cc;">Top 5 confirmed</div>
             
         </div>
         <div style="background-color: #0066cc">
@@ -128,49 +105,117 @@
 
 	<script type="text/javascript">
 	
-		makelist();
+  mycolors = ['red','green','blue','orange','yellow'];
+        myrgb = ['rgba(255,0,0,0.2)','rgba(0,255,0,0.2)','rgba(0,0,255,0.2)','rgba(252,186,3,0.2)','rgba(252,248,3,0.2)']
+        myrgbouts = ['rgb(255,0,0)','rgb(0,255,0)','rgb(0,0,255)','rgb(252,186,3)','rgb(252,248,3)']
+        
+        makelist();
+        makemap();
+        makechart();
+    
         
         function makelist() {
             
+            //data = [{pname:"NYC",cname:"USA",conf:218000},{pname:"Moscow",cname:"Russia",conf:212000},{pname:"Sao Paulo",cname:"Brazil",conf:100000}];
+            
             mylist = document.getElementById("mylist");
             
-            myhtml = "<ul class='collection'><h5>Top 5 confirmed</h5>";
+            myhtml = "<ul class='collection'><h3>Top 5</h3>";
+            // 3 parts of c for loop - 1) counter 2) loop cond. 3) increment or decrement
             for (i=0; i<5;i++) {
                 myhtml = myhtml + "<li class='collection-item avatar'>";
-                myhtml = myhtml + "<i class='material-icons circle'>folder</i>"
-                if(data[i]['pname']==""){
-                	 myhtml = myhtml + "<b>" + data[i]['cname'] + "</b><br>";
-                	}else{
- 					 myhtml = myhtml + "<b>" + data[i]['pname'] + ", " + data[i]['cname'] + "</b><br>";
-                	}
-                myhtml = myhtml + "total confirmed: " + data[i]['conf'] + "</li>";
+                myhtml = myhtml + "<i class='material-icons circle'>location_on</i>"
+                if (data[i]['pname'] == "") {
+                    myhtml = myhtml + "<b>" + data[i]['cname'] + "</b><br>";
+                } else {
+                    myhtml = myhtml + "<b>" + data[i]['pname'] + ", " + data[i]['cname'] + "</b><br>";
+                }
+                myhtml = myhtml + data[i]['conf'] + "</li>";
             }
             myhtml = myhtml + "</ul>";
             
             mylist.innerHTML = myhtml;
             
         }
+        
+        
+        
+        function makemap() {
+            
+            // step 3 - initialize the map
+            var map = L.map('map').setView([30,0], 1.5);
 
-        	 // initialize the map
-  var map = L.map('map').setView([30, 0], 1.5);
+            // step 4 load a tile layer
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png',
+            {
+              maxZoom: 15,
+              minZoom: 1
+            }).addTo(map);
+        
+            
+              
+            // step 5 
+            for (i=0;i<data.length;i++) {
+            	 if (data[i]['pname'] == "") {
+                    bindy = "<h6>" + data[i]['cname'] + ": <h6>" + data[i]['conf'];
+                } else {
+                    bindy = "<h6>" + data[i]['pname'] + ", " + data[i]['cname'] + ": <h6>" + data[i]['conf']
+                }
 
-  // load a tile layer
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png',
-    {
-      attribution: 'Tiles by <a href="http://mapc.org">MAPC</a>, Data by <a href="http://mass.gov/mgis">MassGIS</a>',
-      maxZoom: 17,
-      minZoom: 1
-    }).addTo(map);
+                L.circle([data[i]['lat'], data[i]['lon']], {
+                color: 'red',
+                fillColor: '#f03',
+                fillOpacity: 0.5,
+                radius: data[i]['conf'] * 3
+                }).bindPopup(data[i]['cname'] + ": " + data[i]['conf'], { maxWidth: "auto"}).addTo(map);
+            }
+        }
+        
+        function makechart() {
+            label5 = [];
+            data5 = [];
+            for (i=0;i<5;i++) {
+                if (data[i]['pname'] != "") {
+                   label5.push(data[i]['pname'] + ", " + data[i]['cname']); 
+                } else {
+                   label5.push(data[i]['cname']); 
+                }
+                data5.push(data[i]['conf']);
+            }
+            
+            
+            chart = new Chart(document.getElementById("chartjs-2"),{"type":"horizontalBar","data":{"labels": label5,"datasets":[{"label":"", "data": data5,"fill":false,"backgroundColor":"rgb(0, 153, 255)","borderColor":"rgb(0, 153, 255)", "borderWidth":1}]} ,"options":{"scales":{"xAxes":[{"ticks":{"beginAtZero":true}}]},
+            onClick:function(e, items){
+            if ( items.length == 0 ) return; //Clicked outside any bar.
+            //openModal(items[0]['_model']['label']);
+            console.log(items[i]['_model']['label'])
+            },tooltips: {
+                custom: function(tooltip) {
+                    if (!tooltip) return;
+                    // disable displaying the color box;
+                    tooltip.displayColors = false;
+                  },
+                callbacks: {
+                    label: function(tooltipItem) {
+                        return "Cases: " + tooltipItem.xLabel;
+                    }
+                }   
+            },
+            title: {
+                  display: true,
+                  text: 'Confirmed cases',
+                  position: 'top',
+                  fontSize: 25
+            }
+            }                                                       
+            });
+            
+        }
+        
 
-for (i=0;i<data.length;i++){
-  L.circle([data[i]['lat'], data[i]['lon']], { 
-  	color: 'red', 
-  	fillColor: '#f03',            
-  	fillOpacity: 0.5,            
-  	radius: data[i]['conf'] * 3        
-  }).bindPopup("<h1>My home town</h1>").addTo(map); 
-}
+    
+        
+    </script>
 
-	</script>
 
 </html>
