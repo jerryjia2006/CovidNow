@@ -44,6 +44,9 @@
 			.collection{
 				border:0px;
 			}
+			.centered{
+				margin-bottom: 20px;
+			}
 		</style>
 	</head>
 	<body>
@@ -60,17 +63,88 @@
 
 	<div class="row">
 
-      <div class="col s12 m3 l3">
+      <div class="col s12 m6 l6">
                
-               <canvas id="chartjs-2" style="width: 350px; height: 497px;"></canvas>
+               <canvas id="chartjs-2" style="width: 350px; height: 250px;"></canvas>
       </div>
             
             
-          <div class="col s12 m6 l6 orange" style="padding: 20px;"><div id="map" style="height:497px;"></div></div>
-            
-          <div class="col s12 m3 l3" id="mylist" style="background-color: #0066cc;">Top 5 confirmed</div>
-            
+          <div class="col s12 m6 l6" style="padding: 20px;"><div id="map" style="height:497px;"></div></div>
         </div>
+
+<table class="centered">
+        <thead>
+          <tr>
+              <th>Country</th>
+              <th>total confirmed</th>
+              <th>total deaths</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>United states</td>
+            <td>2,446,706</td>
+            <td>124,749</td>
+          </tr>
+          <tr>
+            <td>Brazil</td>
+            <td>1,228,114</td>
+            <td>54,971</td>
+          </tr>
+          <tr>
+            <td>Russia</td>
+            <td>619,936</td>
+            <td>8,770</td>
+          </tr>
+          <tr>
+            <td>India</td>
+            <td>490,401</td>
+            <td>15,301</td>
+          </tr>
+            <tr>
+            <td>United Kingdom</td>
+            <td>310,836</td>
+            <td>43,498</td>
+          </tr>
+           <tr>
+            <td>Peru</td>
+            <td>268,602</td>
+            <td>8,761</td>
+          </tr>
+           <tr>
+            <td>Chile</td>
+            <td>263,360</td>
+            <td>5,068</td>
+          </tr>
+           <tr>
+            <td>Spain</td>
+            <td>247,905</td>
+            <td>28,338</td>
+          </tr>
+           <tr>
+            <td>Italy</td>
+            <td>239,961</td>
+            <td>43,498</td>
+          </tr>
+           <tr>
+            <td>Iran</td>
+            <td>217,724</td>
+            <td>10,239</td>
+          </tr>
+           <tr>
+            <td>Mexico</td>
+            <td>202,951</td>
+            <td>25,060</td>
+          </tr>
+           <tr>
+            <td>France</td>
+            <td>197,885</td>
+            <td>29,755</td>
+          </tr>
+        </tbody>
+      </table>
+
         <div style="background-color: #0066cc">
 	<iframe width="520" height="415" style="display: block;margin-left: auto;margin-right: auto;"src="https://youtube.com/embed/EFCDu--F-YI" ></iframe>
 		</div>	
@@ -109,34 +183,9 @@
         myrgb = ['rgba(255,0,0,0.2)','rgba(0,255,0,0.2)','rgba(0,0,255,0.2)','rgba(252,186,3,0.2)','rgba(252,248,3,0.2)']
         myrgbouts = ['rgb(255,0,0)','rgb(0,255,0)','rgb(0,0,255)','rgb(252,186,3)','rgb(252,248,3)']
         
-        makelist();
         makemap();
         makechart();
     
-        
-        function makelist() {
-            
-            //data = [{pname:"NYC",cname:"USA",conf:218000},{pname:"Moscow",cname:"Russia",conf:212000},{pname:"Sao Paulo",cname:"Brazil",conf:100000}];
-            
-            mylist = document.getElementById("mylist");
-            
-            myhtml = "<ul class='collection'><h3>Top 5</h3>";
-            // 3 parts of c for loop - 1) counter 2) loop cond. 3) increment or decrement
-            for (i=0; i<5;i++) {
-                myhtml = myhtml + "<li class='collection-item avatar'>";
-                myhtml = myhtml + "<i class='material-icons circle'>location_on</i>"
-                if (data[i]['pname'] == "") {
-                    myhtml = myhtml + "<b>" + data[i]['cname'] + "</b><br>";
-                } else {
-                    myhtml = myhtml + "<b>" + data[i]['pname'] + ", " + data[i]['cname'] + "</b><br>";
-                }
-                myhtml = myhtml + data[i]['conf'] + "</li>";
-            }
-            myhtml = myhtml + "</ul>";
-            
-            mylist.innerHTML = myhtml;
-            
-        }
         
         
         
